@@ -1,24 +1,33 @@
-# Sample Historical Events
-
-This file will be replaced with actual historical data organized by centuries.
+# Digital Book of Centuries - Historical Timeline
 
 ## Century 1 (1-100 AD)
-- 27 BC-14 AD **Augustus Caesar** First Roman Emperor #rulers
-- 30 AD **Jesus Christ** Crucifixion in Jerusalem #worldhistory  
-- 64 AD **Great Fire of Rome** Nero's reign #disasters
-- 79 AD **Mount Vesuvius** Destroys Pompeii #disasters
+- 27 BC-14 AD **Augustus Caesar** First Roman Emperor, establishes Pax Romana #rulers [family]
+- 6 BC **Jesus Christ** Birth in Bethlehem (traditional date) #worldhistory [family]
+- 9 AD **Battle of Teutoburg Forest** Germanic tribes defeat Roman legions #wars [najmi]
+- 30 AD **Jesus Christ** Crucifixion and resurrection in Jerusalem #worldhistory [family]
+- 43 AD **Roman Conquest of Britain** Emperor Claudius invades Britain #wars [family]
+- 54-68 AD **Nero** Roman Emperor known for persecution of Christians #rulers [family]
+- 64 AD **Great Fire of Rome** Destroys much of Rome during Nero's reign #disasters [family]
+- 66-73 AD **First Jewish-Roman War** Jewish revolt against Roman rule #wars [family]
+- 69 AD **Boudica** Celtic queen rebels against Roman rule in Britain #wars [nada]
+- 70 AD **Destruction of Jerusalem** Roman siege destroys Second Temple #worldhistory [family]
+- 79 AD **Mount Vesuvius** Volcanic eruption destroys Pompeii and Herculaneum #disasters [family]
 
 ## Century 2 (101-200 AD)
-- 98-117 AD **Trajan** Roman Emperor expands empire to greatest extent #rulers
-- 122 AD **Hadrian's Wall** Built in northern England #construction
+- 98-117 AD **Trajan** Roman Emperor expands empire to greatest extent #rulers [family]
+- 101-106 AD **Dacian Wars** Trajan conquers Dacia (modern Romania) #wars [najmi]
+- 117-138 AD **Hadrian** Roman Emperor known for defensive policies #rulers [family]
+- 122 AD **Hadrian's Wall** Built across northern England to defend against Scots #construction [family]
+- 132-135 AD **Bar Kokhba Revolt** Final Jewish rebellion against Rome #wars [family]
+- 161-180 AD **Marcus Aurelius** Philosopher emperor, writes Meditations #rulers [family]
+- 165-180 AD **Antonine Plague** Pandemic devastates Roman Empire #disasters [family]
 
-## Sample Data Format
+## Century 9 (801-900 AD)
+- 800 AD **Charlemagne** Crowned Holy Roman Emperor by Pope Leo III #rulers [isa]
+- 843 AD **Treaty of Verdun** Divides Carolingian Empire among three grandsons #politics [family]
+- 845 AD **Viking Raid on Paris** Norse warriors raid French capital #wars [family]
+- 871-899 AD **Alfred the Great** Anglo-Saxon king defeats Vikings, unites England #rulers [family]
 
-Each entry follows this format:
-- DATE **PERSON/EVENT** Description #category [child:name]
-
-Where:
-- DATE can be: year, month/year, day/month/year, year-year, ~year
-- PERSON/EVENT in bold indicates the main subject
-- #category assigns color-coded categories
-- [child:name] assigns to specific child (optional, defaults to family)
+## Century 11 (1001-1100 AD)
+- 1066 AD **Battle of Hastings** Norman conquest of England changes history #wars [isa]
+- 1096-1099 AD **First Crusade** European expedition to reclaim Holy Land #wars [isa]

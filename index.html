@@ -1,12 +1,13 @@
 <!doctype html>
 <meta charset="UTF-8" />
-<title>Life</title>
+<title>Digital Book of Centuries</title>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <meta name="format-detection" content="telephone=no" />
 <link
     rel="stylesheet"
     href="https://fonts.googleapis.com/css?family=Open+Sans:700,400,300"
 />
+<link rel="stylesheet" href="print.css" media="print" />
 <style>
     body {
         font-family:
@@ -44,6 +45,41 @@
         left: 0;
         margin: 0;
         padding: 10px;
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        flex-wrap: wrap;
+    }
+    header #controls {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+    }
+    header select {
+        background: rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        color: #fff;
+        padding: 5px 10px;
+        border-radius: 4px;
+        font-size: 12px;
+        min-width: 150px;
+    }
+    header select option {
+        background: #404040;
+        color: #fff;
+    }
+    header button {
+        background: rgba(255, 255, 255, 0.2);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        color: #fff;
+        padding: 5px 15px;
+        border-radius: 4px;
+        font-size: 12px;
+        cursor: pointer;
+        transition: background 0.2s;
+    }
+    header button:hover {
+        background: rgba(255, 255, 255, 0.3);
     }
     header a {
         margin-left: 1em;
@@ -63,32 +99,26 @@
         font-weight: 300;
         white-space: nowrap;
     }
-    code.desktop {
+    code.worldhistory {
         color: #fef08a;
     }
-    code.laptop {
-        color: #a7f3d0;
-    }
-    code.trackpad {
-        color: #99f6e4;
-    }
-    code.phone {
-        color: #ddd6fe;
-    }
-    code.tablet {
-        color: #a5f3fc;
-    }
-    code.earphones {
+    code.wars {
         color: #fca5a5;
     }
-    code.watch {
-        color: #fbcfe8;
+    code.politics {
+        color: #a7f3d0;
     }
-    code.tv {
-        color: #d8b4fe;
+    code.rulers {
+        color: #ddd6fe;
     }
-    code.console {
+    code.discoveries {
+        color: #a5f3fc;
+    }
+    code.disasters {
         color: #fda4af;
+    }
+    code.construction {
+        color: #c4b5fd;
     }
     #life {
         position: absolute;
@@ -118,6 +148,14 @@
         box-sizing: border-box;
         height: 100%;
         border-left: 1px dashed rgba(255, 255, 255, 0.2);
+    }
+    #life-years .year.decade {
+        border-left: 2px solid rgba(255, 255, 255, 0.4);
+        background: rgba(255, 255, 255, 0.05);
+    }
+    #life-years .year.decade span {
+        font-weight: 400;
+        font-size: 13px;
     }
     #life-years .year:first-child {
         border-left: 0;
@@ -177,8 +215,40 @@
     }
 </style>
 <header>
-    <h1 id="title">Life</h1>
-    <a href="https://github.com/cheeaun/life">Fork me</a>
+    <h1 id="title">Digital Book of Centuries</h1>
+    <div id="controls">
+        <select id="century-selector">
+            <option value="">All Centuries (1-2000 AD)</option>
+            <option value="1">Century 1 (1-100 AD)</option>
+            <option value="2">Century 2 (101-200 AD)</option>
+            <option value="3">Century 3 (201-300 AD)</option>
+            <option value="4">Century 4 (301-400 AD)</option>
+            <option value="5">Century 5 (401-500 AD)</option>
+            <option value="6">Century 6 (501-600 AD)</option>
+            <option value="7">Century 7 (601-700 AD)</option>
+            <option value="8">Century 8 (701-800 AD)</option>
+            <option value="9">Century 9 (801-900 AD)</option>
+            <option value="10">Century 10 (901-1000 AD)</option>
+            <option value="11">Century 11 (1001-1100 AD)</option>
+            <option value="12">Century 12 (1101-1200 AD)</option>
+            <option value="13">Century 13 (1201-1300 AD)</option>
+            <option value="14">Century 14 (1301-1400 AD)</option>
+            <option value="15">Century 15 (1401-1500 AD)</option>
+            <option value="16">Century 16 (1501-1600 AD)</option>
+            <option value="17">Century 17 (1601-1700 AD)</option>
+            <option value="18">Century 18 (1701-1800 AD)</option>
+            <option value="19">Century 19 (1801-1900 AD)</option>
+            <option value="20">Century 20 (1901-2000 AD)</option>
+        </select>
+        <select id="child-selector">
+            <option value="">All Family Events</option>
+            <option value="najmi">Najmi's Book</option>
+            <option value="isa">Isa's Book</option>
+            <option value="nada">Nada's Book</option>
+        </select>
+        <button id="print-btn" onclick="window.preparePrint()">Print Century</button>
+    </div>
+    <a href="https://github.com/zainfathoni/book-of-centuries">View on GitHub</a>
 </header>
 <div id="life"></div>
 <script>
@@ -239,7 +309,7 @@
             },
             fetch: function (fn) {
                 var xhr = new XMLHttpRequest();
-                xhr.open("GET", "life.md", true);
+                xhr.open("GET", "centuries.md", true);
                 xhr.onload = function () {
                     if (xhr.status == 200) fn(xhr.responseText);
                 };
@@ -248,14 +318,36 @@
             parse: function (response) {
                 var list = response.match(/\-\s+[^\n\r]+/gi);
                 var data = [];
+                if (!list) return data;
+                
                 list.forEach(function (l) {
-                    var matches = l.match(/\-\s+([\d\/\-\~]+)\s(.*)/i);
-                    var time = matches[1];
-                    var text = matches[2];
-                    data.push({
-                        time: life.parseTime(time),
-                        text: text,
-                    });
+                    // More flexible regex to handle various date formats including BC/AD
+                    var matches = l.match(/\-\s+(.+?)\s+\*\*(.+?)\*\*\s+(.*)/i);
+                    if (matches) {
+                        var time = matches[1].trim();
+                        var person = matches[2];
+                        var description = matches[3];
+                        var text = '**' + person + '** ' + description;
+                        
+                        data.push({
+                            time: life.parseTime(time),
+                            text: text,
+                        });
+                    } else {
+                        // Fallback for lines that don't follow the **person** format
+                        var fallbackMatches = l.match(/\-\s+(.+)/i);
+                        if (fallbackMatches) {
+                            // Try to extract date from beginning
+                            var content = fallbackMatches[1];
+                            var dateMatch = content.match(/^([\d\s\-\/\~BC\sAD]+)\s+(.+)/);
+                            if (dateMatch) {
+                                data.push({
+                                    time: life.parseTime(dateMatch[1].trim()),
+                                    text: dateMatch[2],
+                                });
+                            }
+                        }
+                    }
                 });
                 return data;
             },
@@ -265,28 +357,38 @@
             parseTime: function (time, point) {
                 if (!point) point = "start";
                 var data = {};
-                if (/^\~\d+$/.test(time)) {
-                    // ~YYYY
+                
+                // Handle BC dates (convert to negative numbers for calculation)
+                var convertBCYear = function(yearStr) {
+                    if (yearStr.includes('BC')) {
+                        return -(parseInt(yearStr.replace(' BC', ''), 10));
+                    }
+                    return parseInt(yearStr.replace(' AD', ''), 10);
+                };
+                
+                if (/^\~\d+( BC| AD)?$/.test(time)) {
+                    // ~YYYY or ~YYYY BC/AD
+                    var yearStr = time.slice(1);
                     data = {
-                        startYear: parseInt(time.slice(1), 10),
+                        startYear: convertBCYear(yearStr),
                         estimate: true,
                     };
-                } else if (/^\d+$/.test(time)) {
-                    // YYYY
-                    data[point + "Year"] = parseInt(time, 10);
-                } else if (/^\d+\/\d+$/.test(time)) {
-                    // MM/YYYY
-                    var t = time.split("/");
-                    data[point + "Month"] = parseInt(t[0], 10);
-                    data[point + "Year"] = parseInt(t[1], 10);
-                } else if (/^\d+\/\d+\/\d+$/.test(time)) {
-                    // DD/MM/YYYY
-                    var t = time.split("/");
-                    data[point + "Date"] = parseInt(t[0], 10);
-                    data[point + "Month"] = parseInt(t[1], 10);
-                    data[point + "Year"] = parseInt(t[2], 10);
-                } else if (/\d\-/.test(time)) {
-                    // TIME-TIME
+                } else if (/^\d+( BC| AD)?$/.test(time)) {
+                    // YYYY or YYYY BC/AD
+                    data[point + "Year"] = convertBCYear(time);
+                } else if (/^\d+\/\d+( BC| AD)?$/.test(time)) {
+                    // MM/YYYY or MM/YYYY BC/AD
+                    var parts = time.split("/");
+                    data[point + "Month"] = parseInt(parts[0], 10);
+                    data[point + "Year"] = convertBCYear(parts[1]);
+                } else if (/^\d+\/\d+\/\d+( BC| AD)?$/.test(time)) {
+                    // DD/MM/YYYY or DD/MM/YYYY BC/AD
+                    var parts = time.split("/");
+                    data[point + "Date"] = parseInt(parts[0], 10);
+                    data[point + "Month"] = parseInt(parts[1], 10);
+                    data[point + "Year"] = convertBCYear(parts[2]);
+                } else if (/\d+.*\-/.test(time)) {
+                    // TIME-TIME (handles BC/AD ranges)
                     var splitTime = time.split("-");
                     var startTime = life.parseTime(splitTime[0]);
                     var endTime = life.parseTime(splitTime[1], "end");
@@ -297,21 +399,67 @@
                         data[k] = endTime[k];
                     }
                 } else if (time == "~") {
-                    // NOW
-                    var now = new Date();
-                    data.endYear = now.getFullYear();
-                    data.endMonth = now.getMonth() + 1;
-                    data.endDate = now.getDate();
+                    // NOW (for ongoing events, use 2000 AD as end)
+                    data.endYear = 2000;
+                    data.endMonth = 12;
+                    data.endDate = 31;
                 }
                 data.title = time;
                 return data;
             },
             firstYear: null,
+            currentCentury: null,
+            currentChild: null,
+            originalData: null,
+            
+            filterData: function(data, century, child) {
+                var filtered = data.slice(); // Copy array
+                
+                if (century) {
+                    var centuryStart = (parseInt(century) - 1) * 100 + 1;
+                    var centuryEnd = parseInt(century) * 100;
+                    
+                    filtered = filtered.filter(function(d) {
+                        var time = d.time;
+                        var startYear = time.startYear || time.year;
+                        var endYear = time.endYear || startYear;
+                        
+                        return (startYear >= centuryStart && startYear <= centuryEnd) ||
+                               (endYear >= centuryStart && endYear <= centuryEnd) ||
+                               (startYear <= centuryStart && endYear >= centuryEnd);
+                    });
+                }
+                
+                if (child) {
+                    filtered = filtered.filter(function(d) {
+                        return d.text.includes('[child:' + child + ']') || 
+                               d.text.includes('[family]') ||
+                               (!d.text.includes('[child:') && !d.text.includes('[family]'));
+                    });
+                }
+                
+                return filtered;
+            },
+            
+            updateView: function() {
+                if (!life.originalData) return;
+                
+                var filteredData = life.filterData(life.originalData, life.currentCentury, life.currentChild);
+                var title = "Digital Book of Centuries";
+                
+                if (life.currentCentury) {
+                    title += " - Century " + life.currentCentury;
+                }
+                if (life.currentChild) {
+                    title += " (" + life.currentChild.charAt(0).toUpperCase() + life.currentChild.slice(1) + "'s Book)";
+                }
+                
+                life.render(title, filteredData);
+            },
             renderEvent: function (d) {
                 var firstYear = life.firstYear;
                 var yearLength = life.config.yearLength;
-                var monthLength = yearLength / 12;
-                var dayLength = monthLength / 30;
+                var decadeLength = yearLength; // Same width as a year used to be, but now represents a decade
 
                 var time = d.time;
                 var estimate = time.estimate;
@@ -323,37 +471,52 @@
                 var endDate = time.endDate;
                 var width = 0;
 
-                // Calculate offset
-                var startTime = new Date(firstYear, 0, 1);
-                var endTime = new Date(
-                    startYear,
-                    startMonth ? startMonth - 1 : 0,
-                    startDate || 1,
-                );
-                var daysDiff = (endTime - startTime) / (24 * 60 * 60 * 1000);
-                offset = daysDiff * dayLength;
+                // Calculate offset based on decades (compressed scale)
+                var firstDecade = Math.floor(firstYear / 10) * 10;
+                var eventDecade = Math.floor(startYear / 10) * 10;
+                var decadeOffset = (eventDecade - firstDecade) / 10 * decadeLength;
+                
+                // Position within the decade (0-9 years compressed into the decade column)
+                var yearWithinDecade = startYear - eventDecade;
+                var yearOffset = yearWithinDecade * (decadeLength / 10); // Compress 10 years into one column width
+                
+                // Add month/day precision within the year (even more compressed)
+                var monthOffset = 0;
+                var dayOffset = 0;
+                if (startMonth) {
+                    monthOffset = (startMonth - 1) * (decadeLength / 10 / 12);
+                }
+                if (startDate) {
+                    dayOffset = (startDate - 1) * (decadeLength / 10 / 12 / 30);
+                }
+                
+                var offset = decadeOffset + yearOffset + monthOffset + dayOffset;
 
-                // Calculate width
+                // Calculate width (also compressed)
                 if (endYear) {
-                    var _endMonth = endMonth ? endMonth - 1 : 11;
-                    var _endDate =
-                        endDate ||
-                        new Date(endYear, _endMonth + 1, 0).getDate();
-                    startTime = new Date(
-                        startYear,
-                        startMonth ? startMonth - 1 : 0,
-                        startDate || 1,
-                    );
-                    endTime = new Date(endYear, _endMonth, _endDate);
-                    daysDiff = (endTime - startTime) / (24 * 60 * 60 * 1000);
-                    width = daysDiff * dayLength;
+                    var endDecade = Math.floor(endYear / 10) * 10;
+                    var endYearWithinDecade = endYear - endDecade;
+                    var endDecadeOffset = (endDecade - firstDecade) / 10 * decadeLength;
+                    var endYearOffset = endYearWithinDecade * (decadeLength / 10);
+                    
+                    var endMonthOffset = 0;
+                    var endDayOffset = 0;
+                    if (endMonth) {
+                        endMonthOffset = (endMonth - 1) * (decadeLength / 10 / 12);
+                    }
+                    if (endDate) {
+                        endDayOffset = (endDate - 1) * (decadeLength / 10 / 12 / 30);
+                    }
+                    
+                    var endOffset = endDecadeOffset + endYearOffset + endMonthOffset + endDayOffset;
+                    width = endOffset - offset;
                 } else {
                     if (startDate) {
-                        width = dayLength;
+                        width = decadeLength / 10 / 365; // Day width (compressed)
                     } else if (startMonth) {
-                        width = monthLength;
+                        width = decadeLength / 10 / 12; // Month width (compressed)
                     } else {
-                        width = yearLength;
+                        width = decadeLength / 10; // Year width (compressed - 1/10th of decade column)
                     }
                 }
 
@@ -411,33 +574,59 @@
                 );
             },
             renderYears: function (firstYear, lastYear) {
-                var dayLength = life.config.yearLength / 12 / 30;
+                var decadeLength = life.config.yearLength; // Same width as before, but for decades
                 var html = "";
-                var days = 0;
                 var hideAge = life.config.hideAge;
-                for (
-                    var y = firstYear, age = 0;
-                    y <= lastYear + 1;
-                    y++, age++
-                ) {
-                    var days = y % 4 == 0 ? 366 : 365;
+                
+                // Round to nearest decades
+                var firstDecade = Math.floor(firstYear / 10) * 10;
+                var lastDecade = Math.floor(lastYear / 10) * 10;
+                
+                for (var decade = firstDecade; decade <= lastDecade; decade += 10) {
+                    var decadeEnd = decade + 9;
+                    var decadeDisplay = decade;
+                    
+                    // Handle BC/AD display for decades
+                    if (decade <= 0 && decadeEnd <= 0) {
+                        decadeDisplay = Math.abs(decadeEnd) + "-" + Math.abs(decade) + " BC";
+                    } else if (decade <= 0 && decadeEnd > 0) {
+                        decadeDisplay = Math.abs(decade) + " BC - " + decadeEnd + " AD";
+                    } else if (decade <= 100) {
+                        decadeDisplay = decade + "-" + decadeEnd + " AD";
+                    } else {
+                        decadeDisplay = decade + "-" + decadeEnd;
+                    }
+                    
                     html +=
-                        '<div class="year" style="width: ' +
-                        (days * dayLength).toFixed(2) +
+                        '<div class="year decade" style="width: ' +
+                        decadeLength.toFixed(2) +
                         'px"><span>' +
-                        y +
-                        (hideAge ? "" : " <i>(" + age + ")</i>") +
+                        decadeDisplay +
                         "</span></div>";
                 }
                 return html;
             },
             render: function (title, data) {
+                // Store original data on first render
+                if (!life.originalData) {
+                    life.originalData = data;
+                    life.initControls();
+                }
+                
                 document.title = title;
                 life.$title.innerHTML = title;
 
-                // Get the first and last year for the year axis
-                var firstYear = new Date().getFullYear();
-                var lastYear = firstYear;
+                // Use configured time range for historical timeline, but adjust for filtered data
+                var firstYear = life.config.timeRange ? life.config.timeRange.start : 1;
+                var lastYear = life.config.timeRange ? life.config.timeRange.end : 2000;
+                
+                // If viewing a specific century, adjust the range
+                if (life.currentCentury) {
+                    firstYear = (parseInt(life.currentCentury) - 1) * 100 + 1;
+                    lastYear = parseInt(life.currentCentury) * 100;
+                }
+                
+                // Override with actual data range if it extends beyond configured range
                 data.forEach(function (d) {
                     var time = d.time;
                     var startYear = time.startYear;
@@ -459,6 +648,55 @@
                 });
                 html += "</div>";
                 life.$el.innerHTML = html;
+            },
+            
+            initControls: function() {
+                var centurySelector = document.getElementById('century-selector');
+                var childSelector = document.getElementById('child-selector');
+                
+                centurySelector.addEventListener('change', function() {
+                    life.currentCentury = this.value || null;
+                    life.updateView();
+                });
+                
+                childSelector.addEventListener('change', function() {
+                    life.currentChild = this.value || null;
+                    life.updateView();
+                });
+            },
+            
+            preparePrint: function() {
+                // Add print header without changing the timeline layout
+                var centuryText = life.currentCentury ? 
+                    " - Century " + life.currentCentury + " (" + 
+                    ((parseInt(life.currentCentury) - 1) * 100 + 1) + "-" + 
+                    (parseInt(life.currentCentury) * 100) + " AD)" : 
+                    " (1-2000 AD)";
+                    
+                var childText = life.currentChild ? 
+                    " - " + life.currentChild.charAt(0).toUpperCase() + life.currentChild.slice(1) + "'s Book" : 
+                    "";
+                
+                // Add print header to the existing timeline
+                var printHeader = '<div class="print-only century-header">';
+                printHeader += '<h1>Digital Book of Centuries</h1>';
+                printHeader += '<h2>' + centuryText + childText + '</h2>';
+                printHeader += '</div>';
+                
+                // Insert header at the beginning without replacing timeline
+                life.$el.insertAdjacentHTML('afterbegin', printHeader);
+                
+                // Trigger print dialog
+                setTimeout(function() {
+                    window.print();
+                    // Remove the print header after printing
+                    var printHeaders = document.querySelectorAll('.print-only.century-header');
+                    printHeaders.forEach(function(header) {
+                        if (header.parentNode) {
+                            header.parentNode.removeChild(header);
+                        }
+                    });
+                }, 500);
             },
         };
 
@@ -496,5 +734,10 @@
 
         life.start();
         slider.init();
+        
+        // Make print function available globally
+        window.preparePrint = function() {
+            life.preparePrint();
+        };
     })();
 </script>

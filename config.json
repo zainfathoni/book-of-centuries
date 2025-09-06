@@ -1,5 +1,21 @@
 {
   "customStylesheetURL": null,
   "yearLength": 120,
-  "hideAge": false
+  "hideAge": true,
+  "timeRange": {
+    "start": 1,
+    "end": 2000
+  },
+  "centuryView": true,
+  "defaultChild": null,
+  "categories": {
+    "worldhistory": "#fef08a",
+    "wars": "#fca5a5",
+    "politics": "#a7f3d0", 
+    "rulers": "#ddd6fe",
+    "discoveries": "#a5f3fc",
+    "disasters": "#fda4af",
+    "construction": "#c4b5fd"
+  },
+  "children": ["najmi", "isa", "nada"]
 }

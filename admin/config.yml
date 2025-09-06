@@ -1,0 +1,127 @@
+backend:
+  name: git-gateway
+  branch: main
+  
+media_folder: "assets/images"
+public_folder: "/assets/images"
+
+collections:
+  - name: "historical-events"
+    label: "Historical Events"
+    folder: "data/events"
+    create: true
+    slug: "{{year}}-{{slug}}"
+    fields:
+      - {label: "Title", name: "title", widget: "string", hint: "Name of the historical figure or event"}
+      - {label: "Date", name: "date", widget: "string", hint: "Format: YYYY, MM/YYYY, DD/MM/YYYY, or YYYY-YYYY. Add BC or AD if needed."}
+      - {label: "End Date", name: "endDate", widget: "string", required: false, hint: "For date ranges, or leave blank for single events"}
+      - {label: "Description", name: "description", widget: "markdown", hint: "Brief description of the historical significance"}
+      - label: "Category"
+        name: "category"
+        widget: "select"
+        options:
+          - {label: "World History", value: "worldhistory"}
+          - {label: "Wars & Battles", value: "wars"}
+          - {label: "Politics & Government", value: "politics"}
+          - {label: "Rulers & Leaders", value: "rulers"}
+          - {label: "Discoveries & Inventions", value: "discoveries"}
+          - {label: "Natural Disasters", value: "disasters"}
+          - {label: "Construction & Architecture", value: "construction"}
+      - label: "Assigned to Child"
+        name: "child"
+        widget: "select"
+        default: "family"
+        options:
+          - {label: "Whole Family", value: "family"}
+          - {label: "Najmi", value: "najmi"}
+          - {label: "Isa", value: "isa"}
+          - {label: "Nada", value: "nada"}
+      - label: "Significance Level"
+        name: "significance"
+        widget: "select"
+        default: "medium"
+        options:
+          - {label: "High - Major historical turning point", value: "high"}
+          - {label: "Medium - Important historical event", value: "medium"}
+          - {label: "Low - Interesting but less critical", value: "low"}
+      - {label: "Sources", name: "sources", widget: "text", required: false, hint: "Optional: Books, websites, or other sources used"}
+      
+  - name: "children"
+    label: "Children Profiles"
+    folder: "data/children"
+    create: true
+    slug: "{{name}}"
+    fields:
+      - {label: "Name", name: "name", widget: "string"}
+      - {label: "Birth Year", name: "birthYear", widget: "number", required: false}
+      - label: "Favorite Historical Periods"
+        name: "favoriteEras"
+        widget: "list"
+        required: false
+        fields:
+          - {label: "Era Name", name: "era", widget: "string"}
+          - {label: "Description", name: "description", widget: "text"}
+      - label: "Color Theme"
+        name: "colorTheme"
+        widget: "select"
+        default: "blue"
+        options:
+          - {label: "Blue", value: "blue"}
+          - {label: "Green", value: "green"}
+          - {label: "Purple", value: "purple"}
+          - {label: "Red", value: "red"}
+          - {label: "Orange", value: "orange"}
+      - {label: "Notes", name: "notes", widget: "markdown", required: false}
+      
+  - name: "centuries"
+    label: "Century Overviews"
+    folder: "data/centuries"
+    create: true
+    slug: "century-{{centuryNumber}}"
+    fields:
+      - {label: "Century Number", name: "centuryNumber", widget: "number", min: 1, max: 20}
+      - {label: "Century Name", name: "title", widget: "string", hint: "e.g., 'Century 1 (1-100 AD)'"}
+      - {label: "Key Themes", name: "themes", widget: "list", hint: "Major themes that characterize this century"}
+      - {label: "Overview", name: "overview", widget: "markdown", hint: "Brief historical context for this century"}
+      - label: "Major Events"
+        name: "events"
+        widget: "list"
+        fields:
+          - {label: "Date", name: "date", widget: "string"}
+          - {label: "Event/Person", name: "event", widget: "string"}
+          - {label: "Description", name: "description", widget: "text"}
+          - {label: "Category", name: "category", widget: "string"}
+          - {label: "Child Assignment", name: "child", widget: "string", default: "family"}
+          
+  - name: "settings"
+    label: "Site Settings"
+    files:
+      - label: "General Configuration"
+        name: "config"
+        file: "config.json"
+        fields:
+          - {label: "Year Length (pixels)", name: "yearLength", widget: "number", default: 120}
+          - {label: "Hide Age Display", name: "hideAge", widget: "boolean", default: true}
+          - {label: "Enable Century View", name: "centuryView", widget: "boolean", default: true}
+          - {label: "Default Child", name: "defaultChild", widget: "string", required: false}
+          - label: "Time Range"
+            name: "timeRange"
+            widget: "object"
+            fields:
+              - {label: "Start Year", name: "start", widget: "number", default: 1}
+              - {label: "End Year", name: "end", widget: "number", default: 2000}
+          - label: "Category Colors"
+            name: "categories"
+            widget: "object"
+            fields:
+              - {label: "World History", name: "worldhistory", widget: "string", default: "#fef08a"}
+              - {label: "Wars", name: "wars", widget: "string", default: "#fca5a5"}
+              - {label: "Politics", name: "politics", widget: "string", default: "#a7f3d0"}
+              - {label: "Rulers", name: "rulers", widget: "string", default: "#ddd6fe"}
+              - {label: "Discoveries", name: "discoveries", widget: "string", default: "#a5f3fc"}
+              - {label: "Disasters", name: "disasters", widget: "string", default: "#fda4af"}
+              - {label: "Construction", name: "construction", widget: "string", default: "#c4b5fd"}
+          - label: "Children List"
+            name: "children"
+            widget: "list"
+            default: ["najmi", "isa", "nada"]

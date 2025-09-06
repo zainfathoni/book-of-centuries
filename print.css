@@ -1,0 +1,250 @@
+/* Print Styles for Digital Book of Centuries */
+
+@media print {
+    body {
+        background: white !important;
+        color: black !important;
+        font-family: "Times New Roman", serif;
+        font-size: 11pt;
+        line-height: 1.3;
+        margin: 0;
+        padding: 15px;
+    }
+    
+    /* Hide interactive elements */
+    header, 
+    #controls,
+    .no-print {
+        display: none !important;
+    }
+    
+    /* Print layout - keep timeline structure */
+    #life {
+        position: static !important;
+        overflow: visible !important;
+        height: auto !important;
+        cursor: default !important;
+    }
+    
+    /* Keep the timeline years header */
+    #life-years {
+        position: static !important;
+        white-space: nowrap;
+        margin-bottom: 20px;
+        border-bottom: 2px solid black;
+        padding-bottom: 10px;
+    }
+    
+    #life-years .year {
+        display: inline-block !important;
+        box-sizing: border-box;
+        color: black !important;
+        font-weight: bold;
+        white-space: nowrap;
+        height: auto !important;
+        border-left: 1px solid #ccc !important;
+        text-align: center;
+        vertical-align: top;
+    }
+    
+    #life-years .year.decade {
+        border-left: 2px solid black !important;
+        background: #f5f5f5 !important;
+    }
+    
+    #life-years .year span {
+        background: none !important;
+        display: block;
+        padding: 8px 4px;
+        position: static !important;
+        font-size: 9pt;
+        color: black !important;
+    }
+    
+    #life-years .year:first-child {
+        border-left: 0 !important;
+    }
+    
+    /* Timeline events - keep screen positioning but stack vertically for print */
+    #life-events {
+        padding: 0;
+        position: static !important;
+        min-height: auto;
+        clear: both;
+    }
+    
+    .event {
+        position: static !important;
+        float: none !important;
+        clear: both !important;
+        display: block !important;
+        margin: 5px 0 !important;
+        padding: 8px 12px !important;
+        page-break-inside: avoid;
+        white-space: normal !important;
+        font-size: 10pt;
+        line-height: 1.3;
+        background: white;
+        border: 1px solid #333;
+        border-radius: 4px;
+        max-width: none;
+        width: auto;
+        height: auto !important;
+        box-shadow: none;
+        /* Create timeline effect with left border */
+        border-left: 4px solid #666;
+        /* Override any margin-left positioning from screen layout */
+        margin-left: 0 !important;
+        left: 0 !important;
+        transform: none !important;
+    }
+    
+    /* Make events look like timeline entries */
+    .event:nth-child(odd) {
+        background: #f9f9f9;
+        border-left-color: #999;
+    }
+    
+    .event:nth-child(even) {
+        background: white;
+        border-left-color: #666;
+    }
+    
+    .event .time {
+        display: none !important;
+    }
+    
+    /* Add a simple bullet point instead */
+    .event:before {
+        content: "•";
+        font-weight: bold;
+        font-size: 14pt;
+        margin-right: 8px;
+        color: #666;
+    }
+    
+    .event b {
+        color: black !important;
+        font-weight: bold !important;
+        margin-right: 6px;
+        font-size: 9pt;
+    }
+    
+    .event strong {
+        font-weight: bold !important;
+        text-decoration: underline;
+    }
+    
+    /* Category styling for print - keep colors but make them print-friendly */
+    code.worldhistory {
+        background: #fff2cc !important;
+        color: #996600 !important;
+    }
+    code.wars {
+        background: #ffe6e6 !important;
+        color: #cc0000 !important;
+    }
+    code.politics {
+        background: #e6f7f0 !important;
+        color: #006633 !important;
+    }
+    code.rulers {
+        background: #f0e6ff !important;
+        color: #6600cc !important;
+    }
+    code.discoveries {
+        background: #e6faff !important;
+        color: #0066cc !important;
+    }
+    code.disasters {
+        background: #ffe6f0 !important;
+        color: #cc0066 !important;
+    }
+    code.construction {
+        background: #f2e6ff !important;
+        color: #8000cc !important;
+    }
+    
+    code {
+        padding: 1px 3px !important;
+        border-radius: 2px;
+        font-size: 8pt !important;
+        font-family: monospace;
+        font-weight: bold;
+    }
+    
+    /* Child assignment styling */
+    .child-assignment {
+        font-style: italic;
+        font-size: 8pt;
+        color: #666 !important;
+        position: absolute;
+        right: 5px;
+        top: 2px;
+    }
+    
+    /* Page setup */
+    @page {
+        margin: 0.75in;
+        size: landscape; /* Better for timeline layout */
+        @top-center {
+            content: "Digital Book of Centuries";
+            font-size: 10pt;
+            color: #666;
+        }
+        @bottom-center {
+            content: counter(page);
+            font-size: 10pt;
+        }
+    }
+    
+    /* Century header for print */
+    .print-only.century-header {
+        text-align: center !important;
+        margin-bottom: 20px !important;
+        border-bottom: 3px solid black !important;
+        padding-bottom: 10px !important;
+        page-break-after: avoid;
+    }
+    
+    .print-only.century-header h1 {
+        font-size: 18pt !important;
+        margin: 0 !important;
+        font-weight: bold !important;
+        color: black !important;
+    }
+    
+    .print-only.century-header h2 {
+        font-size: 12pt !important;
+        margin: 5px 0 0 0 !important;
+        font-weight: normal !important;
+        font-style: italic !important;
+        color: #666 !important;
+    }
+    
+    /* Ensure timeline stays together */
+    #life-years, #life-events {
+        page-break-inside: avoid;
+    }
+    
+    /* Override any problematic styles */
+    * {
+        -webkit-print-color-adjust: exact !important;
+        color-adjust: exact !important;
+    }
+}
+
+/* Print-specific classes for JS to use */
+.print-only {
+    display: none;
+}
+
+@media print {
+    .print-only {
+        display: block !important;
+    }
+    
+    .screen-only {
+        display: none !important;
+    }
+}
