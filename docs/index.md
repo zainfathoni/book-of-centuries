@@ -20,7 +20,7 @@ students visualize historical connections across time periods.
 - **Time Period**: 1 AD - 2000 AD (20 centuries) ✅
 - **Categories**: World History (wars, political events, rulers, discoveries,
   disasters, construction) ✅
-- **Data Management**: Decap CMS for user-friendly editing interface ✅
+- **Data Management**: Direct markdown file editing for contributors ✅
 - **Viewing Modes**: Century view (100 years per screen), Timeline view,
   Printable century pages ✅
 - **Multi-Child Support**: Individual books for each child ✅
@@ -33,10 +33,8 @@ students visualize historical connections across time periods.
 
 - **Frontend**: Pure HTML5, CSS3, Vanilla JavaScript (no frameworks)
 - **Data Format**: Markdown files with JSON metadata
-- **CMS**: Decap CMS for content management
-- **Authentication**: Git Gateway with Netlify Identity
-- **Styling**: CSS with Google Fonts (Open Sans)
-- **Build**: Static site generation (no compilation required)
+- **Content Management**: Direct markdown file editing for contributors
+- **Hosting**: Static site compatible (Netlify/Vercel recommended)
 - **Mobile**: Responsive design with touch optimizations
 
 ### Data Structure Design
@@ -279,7 +277,7 @@ All 20 centuries now have comprehensive historical data.
   time periods
 - **Mobile Optimization**: Responsive design for all device sizes
 - **Data Export**: JSON and CSV export functionality
-- **Content Management**: Decap CMS integration for user-friendly editing
+- **Content Management**: Direct file editing with contributor guidelines
 - **Multi-Child Support**: Individual books and family events
 - **Educational Enhancement**: Charlotte Mason methodology integration
 - **Century Navigation**: Decade-based timeline with century filtering
@@ -300,7 +298,7 @@ working:
    connections
 3. **Multi-Child Support** - Individual books for each child with family events
 4. **Mobile Friendly** - Works on all devices with touch optimization
-5. **Data Management** - Export/import and Decap CMS integration
+5. **Data Management** - Export/import with direct file editing
 6. **Educational Focus** - Charlotte Mason methodology throughout
 
 ## File Structure

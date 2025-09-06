@@ -24,7 +24,7 @@ This project adapts the timeline concept from [life tracking](https://life.zainf
 - **🎨 Category System**: Color-coded categories (worldhistory, wars, politics, rulers, discoveries, disasters, construction)
 
 ### ✅ Content Management
-- **Decap CMS Integration**: User-friendly content management system for adding historical events
+- **Direct Markdown Editing**: Simple file-based content management for contributors
 - **Clear Filters**: Reset all filters with one click
 - **Print Support**: Basic print functionality (print layout needs refinement)
 
@@ -92,7 +92,7 @@ Each century includes major political events, discoveries, rulers, wars, and cul
 
 ### Adding Historical Events
 
-Historical events follow this format in century files or via Decap CMS:
+Historical events follow this format in century files:
 
 ```markdown
 - DATE **HISTORICAL_FIGURE/EVENT** Description #category [child:assignment]
@@ -130,15 +130,14 @@ Historical events follow this format in century files or via Decap CMS:
 
 ## Content Management
 
-### Using Decap CMS (Optional)
+### Direct File Editing
 
-For user-friendly content management:
+For adding or editing historical events:
 
-1. **Setup Required**: Deploy to a platform with Git integration (Netlify recommended)
-2. **Access CMS**: Navigate to `/admin/` after deployment
-3. **Add Events**: Use the rich text interface to add historical events
-4. **Manage Children**: Create and manage child profiles  
-5. **Categories**: Organize events by historical categories
+1. **Edit Century Files**: Modify individual century files in `data/centuries/`
+2. **Edit Main Timeline**: Update `centuries.md` for main historical events
+3. **Edit Child Profiles**: Update files in `data/children/`
+4. **Follow Format**: Use the established markdown format for consistency
 
 ### Manual Editing
 
@@ -161,7 +160,7 @@ The application is optimized for mobile devices:
 
 - **Frontend**: Pure HTML/CSS/JavaScript (no frameworks)
 - **Data Storage**: Markdown files for version control and simplicity
-- **Content Management**: Decap CMS for user-friendly editing
+- **Content Management**: Direct markdown file editing for contributors
 - **Hosting**: Static site compatible (Netlify/Vercel recommended)
 - **Mobile**: Responsive CSS with touch optimizations
 
@@ -175,7 +174,7 @@ The application is optimized for mobile devices:
 - **Historical Connections**: Click events to discover related events
 - **Mobile Optimization**: Responsive design for all device sizes
 - **Data Export**: JSON and CSV export functionality
-- **Content Management**: Decap CMS integration
+- **Content Management**: Direct file editing with contributor guidelines
 - **Multi-Child Support**: Individual books and family events
 
 ### 🚧 In Development
