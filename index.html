@@ -68,6 +68,18 @@
         background: #404040;
         color: #fff;
     }
+    header input {
+        background: rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        color: #fff;
+        padding: 5px 10px;
+        border-radius: 4px;
+        font-size: 12px;
+        min-width: 200px;
+    }
+    header input::placeholder {
+        color: rgba(255, 255, 255, 0.6);
+    }
     header button {
         background: rgba(255, 255, 255, 0.2);
         border: 1px solid rgba(255, 255, 255, 0.3);
@@ -89,6 +101,127 @@
     header a:hover {
         opacity: 0.7;
         text-decoration: underline;
+    }
+    .selected-event {
+        background-color: rgba(255, 255, 0, 0.3) !important;
+        border: 2px solid #ffff00 !important;
+        border-radius: 4px;
+    }
+    .related-event {
+        background-color: rgba(0, 255, 255, 0.2) !important;
+        border: 1px solid #00ffff !important;
+        border-radius: 3px;
+    }
+    .event {
+        cursor: pointer;
+        transition: background-color 0.2s ease;
+    }
+    .event:hover {
+        background-color: rgba(255, 255, 255, 0.1);
+    }
+    
+    /* Mobile and tablet optimizations */
+    @media (max-width: 768px) {
+        body {
+            font-size: 10px;
+        }
+        
+        header {
+            position: relative;
+            background: rgba(56, 64, 71, 1);
+            padding: 5px;
+            margin-bottom: 10px;
+        }
+        
+        header h1 {
+            font-size: 16px;
+            margin-bottom: 10px;
+            display: block;
+            text-align: center;
+        }
+        
+        header #controls {
+            flex-direction: column;
+            gap: 8px;
+            align-items: stretch;
+        }
+        
+        header select, header input, header button {
+            min-width: auto;
+            width: 100%;
+            font-size: 11px;
+            padding: 8px;
+        }
+        
+        header select[multiple] {
+            min-height: 80px;
+        }
+        
+        header a {
+            text-align: center;
+            margin: 10px 0 0 0;
+        }
+        
+        .event {
+            font-size: 9px;
+            line-height: 1.2;
+            margin-bottom: 2px;
+            padding: 2px;
+            border-radius: 3px;
+        }
+        
+        .event b {
+            display: block;
+            margin-bottom: 2px;
+        }
+        
+        #life-years {
+            font-size: 8px;
+        }
+        
+        #life-years .year {
+            writing-mode: vertical-rl;
+            text-orientation: mixed;
+            height: 40px;
+            line-height: 1;
+        }
+    }
+    
+    @media (max-width: 480px) {
+        body {
+            font-size: 9px;
+        }
+        
+        header h1 {
+            font-size: 14px;
+        }
+        
+        .event {
+            font-size: 8px;
+        }
+        
+        #life-years .year {
+            height: 30px;
+            font-size: 7px;
+        }
+    }
+    
+    /* Touch interaction improvements */
+    @media (hover: none) and (pointer: coarse) {
+        .event {
+            padding: 6px;
+            margin-bottom: 4px;
+            min-height: 20px;
+        }
+        
+        .event:active {
+            background-color: rgba(255, 255, 255, 0.2);
+            transform: scale(0.98);
+        }
+        
+        header select, header input, header button {
+            min-height: 44px; /* iOS recommended touch target size */
+        }
     }
     h1 {
         display: inline;
@@ -217,6 +350,7 @@
 <header>
     <h1 id="title">Digital Book of Centuries</h1>
     <div id="controls">
+        <input type="text" id="search-input" placeholder="Search events..." />
         <select id="century-selector">
             <option value="">All Centuries (1-2000 AD)</option>
             <option value="1">Century 1 (1-100 AD)</option>
@@ -246,6 +380,19 @@
             <option value="isa">Isa's Book</option>
             <option value="nada">Nada's Book</option>
         </select>
+        <select id="category-selector" multiple>
+            <option value="">All Categories</option>
+            <option value="worldhistory">World History</option>
+            <option value="wars">Wars</option>
+            <option value="politics">Politics</option>
+            <option value="rulers">Rulers</option>
+            <option value="discoveries">Discoveries</option>
+            <option value="disasters">Disasters</option>
+            <option value="construction">Construction</option>
+        </select>
+        <button id="clear-filters-btn">Clear All Filters</button>
+        <button id="export-json-btn">Export JSON</button>
+        <button id="export-csv-btn">Export CSV</button>
         <button id="print-btn" onclick="window.preparePrint()">Print Century</button>
     </div>
     <a href="https://github.com/zainfathoni/book-of-centuries">View on GitHub</a>
@@ -410,9 +557,13 @@
             firstYear: null,
             currentCentury: null,
             currentChild: null,
+            currentSearch: null,
+            currentCategories: [],
+            selectedEvent: null,
+            eventConnections: {}, // Will store event connections
             originalData: null,
             
-            filterData: function(data, century, child) {
+            filterData: function(data, century, child, search, categories) {
                 var filtered = data.slice(); // Copy array
                 
                 if (century) {
@@ -438,13 +589,29 @@
                     });
                 }
                 
+                if (search && search.trim()) {
+                    var searchTerm = search.toLowerCase().trim();
+                    filtered = filtered.filter(function(d) {
+                        return d.text.toLowerCase().includes(searchTerm) ||
+                               (d.title && d.title.toLowerCase().includes(searchTerm));
+                    });
+                }
+                
+                if (categories && categories.length > 0) {
+                    filtered = filtered.filter(function(d) {
+                        return categories.some(function(category) {
+                            return d.text.includes('#' + category);
+                        });
+                    });
+                }
+                
                 return filtered;
             },
             
             updateView: function() {
                 if (!life.originalData) return;
                 
-                var filteredData = life.filterData(life.originalData, life.currentCentury, life.currentChild);
+                var filteredData = life.filterData(life.originalData, life.currentCentury, life.currentChild, life.currentSearch, life.currentCategories);
                 var title = "Digital Book of Centuries";
                 
                 if (life.currentCentury) {
@@ -453,8 +620,146 @@
                 if (life.currentChild) {
                     title += " (" + life.currentChild.charAt(0).toUpperCase() + life.currentChild.slice(1) + "'s Book)";
                 }
+                if (life.currentSearch && life.currentSearch.trim()) {
+                    title += " - Search: \"" + life.currentSearch + "\"";
+                }
+                if (life.currentCategories && life.currentCategories.length > 0) {
+                    title += " - Categories: " + life.currentCategories.join(", ");
+                }
                 
                 life.render(title, filteredData);
+            },
+            
+            findRelatedEvents: function(selectedEvent, allData) {
+                var related = [];
+                var selectedText = selectedEvent.text.toLowerCase();
+                var selectedCategories = selectedText.match(/#(\w+)/g) || [];
+                
+                allData.forEach(function(event) {
+                    if (event === selectedEvent) return;
+                    
+                    var eventText = event.text.toLowerCase();
+                    var eventCategories = eventText.match(/#(\w+)/g) || [];
+                    
+                    // Find common categories
+                    var commonCategories = selectedCategories.filter(function(cat) {
+                        return eventCategories.includes(cat);
+                    });
+                    
+                    // Find common keywords (rulers, places, concepts)
+                    var keywords = selectedText.match(/\b[A-Z][a-z]+(?:\s+[A-Z][a-z]+)*\b/g) || [];
+                    var commonKeywords = keywords.filter(function(keyword) {
+                        return eventText.includes(keyword.toLowerCase()) && keyword.length > 3;
+                    });
+                    
+                    // Score the relationship
+                    var score = commonCategories.length * 2 + commonKeywords.length;
+                    
+                    if (score > 0) {
+                        related.push({
+                            event: event,
+                            score: score,
+                            commonCategories: commonCategories,
+                            commonKeywords: commonKeywords
+                        });
+                    }
+                });
+                
+                // Sort by relevance score
+                related.sort(function(a, b) { return b.score - a.score; });
+                return related.slice(0, 10); // Return top 10 related events
+            },
+            
+            selectEvent: function(event) {
+                life.selectedEvent = event;
+                life.updateView();
+            },
+            
+            exportToJSON: function() {
+                var exportData = {
+                    metadata: {
+                        title: "Digital Book of Centuries",
+                        exportDate: new Date().toISOString(),
+                        totalEvents: life.originalData ? life.originalData.length : 0,
+                        timeRange: life.config.timeRange
+                    },
+                    events: life.originalData || [],
+                    config: life.config
+                };
+                
+                var dataStr = JSON.stringify(exportData, null, 2);
+                var blob = new Blob([dataStr], {type: "application/json"});
+                var url = URL.createObjectURL(blob);
+                var link = document.createElement('a');
+                link.href = url;
+                link.download = 'book-of-centuries-' + new Date().toISOString().split('T')[0] + '.json';
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                URL.revokeObjectURL(url);
+            },
+            
+            exportToCSV: function() {
+                if (!life.originalData || life.originalData.length === 0) {
+                    alert('No data to export');
+                    return;
+                }
+                
+                var headers = ['Year', 'Title', 'Description', 'Categories', 'Children', 'Duration'];
+                var rows = [headers];
+                
+                life.originalData.forEach(function(event) {
+                    var year = event.time.startYear || event.time.year || '';
+                    var endYear = event.time.endYear;
+                    var yearStr = endYear && endYear !== year ? year + '-' + endYear : year;
+                    
+                    var title = event.time.title || '';
+                    var text = event.text || '';
+                    
+                    // Extract categories
+                    var categories = (text.match(/#(\w+)/g) || []).join(', ');
+                    
+                    // Extract children assignments
+                    var children = '';
+                    if (text.includes('[family]')) children = 'family';
+                    else {
+                        var childMatches = text.match(/\[child:(\w+)\]/g);
+                        if (childMatches) {
+                            children = childMatches.map(function(m) { 
+                                return m.replace('[child:', '').replace(']', ''); 
+                            }).join(', ');
+                        }
+                    }
+                    
+                    var duration = '';
+                    if (event.time.startYear && event.time.endYear) {
+                        duration = (event.time.endYear - event.time.startYear + 1) + ' years';
+                    }
+                    
+                    // Clean text for CSV (remove markdown and tags)
+                    var cleanText = text.replace(/#\w+/g, '').replace(/\[child:\w+\]/g, '').replace(/\[family\]/g, '').trim();
+                    
+                    rows.push([yearStr, title, cleanText, categories, children, duration]);
+                });
+                
+                var csvContent = rows.map(function(row) {
+                    return row.map(function(field) {
+                        // Escape quotes and wrap in quotes if contains comma or quote
+                        var escaped = (field || '').toString().replace(/"/g, '""');
+                        return escaped.includes(',') || escaped.includes('"') || escaped.includes('\n') ? 
+                               '"' + escaped + '"' : escaped;
+                    }).join(',');
+                }).join('\n');
+                
+                var blob = new Blob([csvContent], {type: "text/csv"});
+                var url = URL.createObjectURL(blob);
+                var link = document.createElement('a');
+                link.href = url;
+                link.download = 'book-of-centuries-' + new Date().toISOString().split('T')[0] + '.csv';
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                URL.revokeObjectURL(url);
             },
             renderEvent: function (d) {
                 var firstYear = life.firstYear;
@@ -558,9 +863,23 @@
 
                 // Parse Italic in the text
                 d.text = d.text.replace(/\s\_([^\*]+)\_/g, " <i>$1</i>");
+                
+                // Determine event classes for highlighting
+                var eventClasses = "event";
+                var eventId = "event-" + startYear + "-" + d.text.replace(/[^a-zA-Z0-9]/g, '').substring(0, 20);
+                
+                if (life.selectedEvent && life.selectedEvent === d) {
+                    eventClasses += " selected-event";
+                } else if (life.selectedEvent) {
+                    var relatedEvents = life.findRelatedEvents(life.selectedEvent, life.originalData || []);
+                    var isRelated = relatedEvents.some(function(rel) { return rel.event === d; });
+                    if (isRelated) {
+                        eventClasses += " related-event";
+                    }
+                }
 
                 return (
-                    '<div class="event" style="margin-left: ' +
+                    '<div class="' + eventClasses + '" id="' + eventId + '" data-event-index="' + d.originalIndex + '" style="margin-left: ' +
                     offset.toFixed(2) +
                     'px">' +
                     '<div class="time" style="width: ' +
@@ -611,6 +930,7 @@
                 if (!life.originalData) {
                     life.originalData = data;
                     life.initControls();
+                    life.setupEventListeners(); // Setup event delegation
                 }
                 
                 document.title = title;
@@ -643,16 +963,44 @@
                     '<div id="life-years" class="comment_">' +
                     life.renderYears(firstYear, lastYear) +
                     "</div>";
-                data.forEach(function (d) {
+                data.forEach(function (d, index) {
+                    d.originalIndex = index; // Add index for event identification
                     html += life.renderEvent(d);
                 });
                 html += "</div>";
                 life.$el.innerHTML = html;
             },
             
+            setupEventListeners: function() {
+                // Add event delegation for event clicks (only once)
+                if (!life.eventListenerAdded) {
+                    life.$el.addEventListener('click', function(e) {
+                        var eventElement = e.target.closest('.event');
+                        if (eventElement && eventElement.dataset.eventIndex !== undefined) {
+                            var eventIndex = parseInt(eventElement.dataset.eventIndex);
+                            var clickedEvent = life.originalData[eventIndex];
+                            if (clickedEvent) {
+                                if (life.selectedEvent === clickedEvent) {
+                                    // Deselect if clicking the same event
+                                    life.selectedEvent = null;
+                                } else {
+                                    life.selectEvent(clickedEvent);
+                                }
+                            }
+                        }
+                    });
+                    life.eventListenerAdded = true;
+                }
+            },
+            
             initControls: function() {
                 var centurySelector = document.getElementById('century-selector');
                 var childSelector = document.getElementById('child-selector');
+                var searchInput = document.getElementById('search-input');
+                var categorySelector = document.getElementById('category-selector');
+                var clearFiltersBtn = document.getElementById('clear-filters-btn');
+                var exportJsonBtn = document.getElementById('export-json-btn');
+                var exportCsvBtn = document.getElementById('export-csv-btn');
                 
                 centurySelector.addEventListener('change', function() {
                     life.currentCentury = this.value || null;
@@ -662,6 +1010,41 @@
                 childSelector.addEventListener('change', function() {
                     life.currentChild = this.value || null;
                     life.updateView();
+                });
+                
+                searchInput.addEventListener('input', function() {
+                    life.currentSearch = this.value || null;
+                    life.updateView();
+                });
+                
+                categorySelector.addEventListener('change', function() {
+                    var selectedCategories = Array.from(this.selectedOptions)
+                        .map(function(option) { return option.value; })
+                        .filter(function(value) { return value !== ""; });
+                    life.currentCategories = selectedCategories;
+                    life.updateView();
+                });
+                
+                clearFiltersBtn.addEventListener('click', function() {
+                    life.currentCentury = null;
+                    life.currentChild = null;
+                    life.currentSearch = null;
+                    life.currentCategories = [];
+                    
+                    centurySelector.value = "";
+                    childSelector.value = "";
+                    searchInput.value = "";
+                    categorySelector.selectedIndex = -1;
+                    
+                    life.updateView();
+                });
+                
+                exportJsonBtn.addEventListener('click', function() {
+                    life.exportToJSON();
+                });
+                
+                exportCsvBtn.addEventListener('click', function() {
+                    life.exportToCSV();
                 });
             },
             
