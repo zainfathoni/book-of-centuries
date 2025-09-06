@@ -103,12 +103,20 @@
         text-decoration: underline;
     }
     .selected-event {
-        background-color: rgba(255, 255, 0, 0.3) !important;
-        border: 2px solid #ffff00 !important;
+        background-color: rgba(56, 64, 71, 0.8) !important;
+        border: 2px solid #ffffff !important;
         border-radius: 4px;
+        box-shadow: 0 0 8px rgba(255, 255, 255, 0.5);
+    }
+    .selected-event code {
+        background-color: rgba(0, 0, 0, 0.3);
+        padding: 2px 4px;
+        border-radius: 3px;
+        font-weight: bold;
+        text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.7);
     }
     .related-event {
-        background-color: rgba(0, 255, 255, 0.2) !important;
+        background-color: rgba(0, 255, 255, 0.15) !important;
         border: 1px solid #00ffff !important;
         border-radius: 3px;
     }
@@ -117,73 +125,216 @@
         transition: background-color 0.2s ease;
     }
     .event:hover {
-        background-color: rgba(255, 255, 255, 0.1);
+        background-color: rgba(255, 255, 255, 0.05);
+    }
+    .event:hover code {
+        background-color: rgba(255, 255, 255, 0.15);
+        transform: scale(1.05);
+    }
+    
+    /* Mobile toggle button */
+    .mobile-only {
+        display: flex; /* Temporarily show on all screen sizes for testing */
+    }
+    
+    #mobile-toggle {
+        background: rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        border-radius: 4px;
+        padding: 8px 10px;
+        cursor: pointer;
+        position: absolute;
+        top: 15px;
+        right: 15px;
+        z-index: 10;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        width: 40px;
+        height: 40px;
+        transition: all 0.3s ease;
+    }
+    
+    #mobile-toggle:hover {
+        background: rgba(255, 255, 255, 0.2);
+    }
+    
+    /* Visual indicator when controls are open */
+    .controls-open #mobile-toggle {
+        background: rgba(0, 255, 0, 0.3);
+        border-color: #00ff00;
+    }
+    
+    .hamburger {
+        display: block;
+        width: 20px;
+        height: 2px;
+        background: #fff;
+        margin: 2px 0;
+        border-radius: 1px;
+        transition: all 0.3s ease;
+    }
+    
+    /* Animated hamburger when controls are open */
+    .controls-open #mobile-toggle .hamburger:nth-child(1) {
+        transform: rotate(45deg) translate(5px, 5px);
+    }
+    
+    .controls-open #mobile-toggle .hamburger:nth-child(2) {
+        opacity: 0;
+    }
+    
+    .controls-open #mobile-toggle .hamburger:nth-child(3) {
+        transform: rotate(-45deg) translate(7px, -6px);
+    }
+    
+    /* Controls animation */
+    #controls {
+        transition: all 0.3s ease;
     }
     
     /* Mobile and tablet optimizations */
     @media (max-width: 768px) {
         body {
             font-size: 10px;
+            padding-bottom: 0;
+            margin: 0;
+        }
+        
+        /* Show mobile toggle button */
+        .mobile-only {
+            display: flex !important;
         }
         
         header {
             position: relative;
             background: rgba(56, 64, 71, 1);
-            padding: 5px;
-            margin-bottom: 10px;
+            padding: 15px;
+            margin: 0 0 10px 0;
+            flex-direction: column;
+            align-items: stretch;
+            gap: 10px;
+            border-radius: 0;
         }
         
         header h1 {
-            font-size: 16px;
-            margin-bottom: 10px;
-            display: block;
+            font-size: 18px;
+            margin: 0 40px 0 0;
             text-align: center;
+            order: -1;
         }
         
+        /* Hide controls by default on mobile */
         header #controls {
+            display: none;
             flex-direction: column;
-            gap: 8px;
+            gap: 10px;
             align-items: stretch;
+            width: 100%;
+            margin-top: 10px;
+        }
+        
+        /* Show controls when toggled */
+        header.controls-open #controls {
+            display: flex;
         }
         
         header select, header input, header button {
             min-width: auto;
             width: 100%;
-            font-size: 11px;
-            padding: 8px;
+            font-size: 12px;
+            padding: 12px;
+            border-radius: 6px;
+            min-height: 44px;
+            box-sizing: border-box;
         }
         
         header select[multiple] {
             min-height: 80px;
+            max-height: 80px;
         }
         
         header a {
             text-align: center;
             margin: 10px 0 0 0;
+            padding: 10px;
+            display: block;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 6px;
+            text-decoration: none;
+        }
+        
+        /* Optimize timeline space */
+        #life {
+            position: relative;
+            top: 0;
+            left: 0;
+            right: 0;
+            width: 100%;
+            margin: 0;
+            padding: 0 10px;
+            box-sizing: border-box;
+        }
+        
+        /* More space when controls are hidden */
+        body:not(.controls-open) #life {
+            padding-top: 10px;
+        }
+        
+        body.controls-open #life {
+            padding-top: 20px;
+        }
+        
+        #life-events {
+            padding-top: 20px;
+            padding-bottom: 20px;
         }
         
         .event {
-            font-size: 9px;
-            line-height: 1.2;
-            margin-bottom: 2px;
-            padding: 2px;
-            border-radius: 3px;
+            font-size: 10px;
+            line-height: 1.3;
+            margin-bottom: 4px;
+            padding: 8px;
+            border-radius: 4px;
+            background: rgba(255, 255, 255, 0.05);
+            clear: both;
+            float: none;
+            width: 100%;
+            box-sizing: border-box;
+            white-space: normal;
+            word-wrap: break-word;
         }
         
         .event b {
             display: block;
-            margin-bottom: 2px;
+            margin-bottom: 4px;
+            font-size: 11px;
+        }
+        
+        .event .time {
+            display: none;
         }
         
         #life-years {
-            font-size: 8px;
+            font-size: 9px;
+            position: sticky;
+            top: 0;
+            background: rgba(56, 64, 71, 0.9);
+            z-index: 2;
+            padding: 5px 0;
         }
         
         #life-years .year {
-            writing-mode: vertical-rl;
+            writing-mode: horizontal-tb;
             text-orientation: mixed;
-            height: 40px;
-            line-height: 1;
+            height: auto;
+            line-height: 1.2;
+            display: inline-block;
+            margin: 0 5px 5px 0;
+            padding: 2px 6px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 3px;
+            font-size: 8px;
         }
     }
     
@@ -193,16 +344,31 @@
         }
         
         header h1 {
-            font-size: 14px;
+            font-size: 16px;
+        }
+        
+        header select, header input, header button {
+            font-size: 11px;
+            padding: 10px;
         }
         
         .event {
-            font-size: 8px;
+            font-size: 9px;
+            padding: 6px;
+        }
+        
+        .event b {
+            font-size: 10px;
         }
         
         #life-years .year {
-            height: 30px;
             font-size: 7px;
+            padding: 1px 4px;
+            margin: 0 3px 3px 0;
+        }
+        
+        #life {
+            padding: 0 5px;
         }
     }
     
@@ -232,6 +398,17 @@
         font-weight: 300;
         white-space: nowrap;
     }
+    code {
+        font-family: 'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', Consolas, 'Courier New', monospace;
+        font-size: 0.9em;
+        padding: 1px 3px;
+        border-radius: 2px;
+        margin: 0 2px;
+        background-color: rgba(255, 255, 255, 0.1);
+        text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.5);
+        font-weight: 500;
+        transition: all 0.2s ease;
+    }
     code.worldhistory {
         color: #fef08a;
     }
@@ -252,6 +429,12 @@
     }
     code.construction {
         color: #c4b5fd;
+    }
+    code.birth {
+        color: #ff9faa;
+    }
+    code.death {
+        color: #9ca3af;
     }
     #life {
         position: absolute;
@@ -349,6 +532,11 @@
 </style>
 <header>
     <h1 id="title">Digital Book of Centuries</h1>
+    <button id="mobile-toggle" class="mobile-only" onclick="toggleMobileControls()">
+        <span class="hamburger"></span>
+        <span class="hamburger"></span>
+        <span class="hamburger"></span>
+    </button>
     <div id="controls">
         <input type="text" id="search-input" placeholder="Search events..." />
         <select id="century-selector">
@@ -389,6 +577,8 @@
             <option value="discoveries">Discoveries</option>
             <option value="disasters">Disasters</option>
             <option value="construction">Construction</option>
+            <option value="birth">Birth</option>
+            <option value="death">Death</option>
         </select>
         <button id="clear-filters-btn">Clear All Filters</button>
         <button id="export-json-btn">Export JSON</button>
@@ -453,6 +643,22 @@
                 link.rel = "stylesheet";
                 link.href = url;
                 document.body.appendChild(link);
+            },
+            toggleControls: function() {
+                var header = document.querySelector('header');
+                var body = document.body;
+                
+                console.log('Toggle called! Current state:', header.classList.contains('controls-open'));
+                
+                if (header.classList.contains('controls-open')) {
+                    header.classList.remove('controls-open');
+                    body.classList.remove('controls-open');
+                    console.log('Controls hidden');
+                } else {
+                    header.classList.add('controls-open');
+                    body.classList.add('controls-open');
+                    console.log('Controls shown');
+                }
             },
             fetch: function (fn) {
                 var xhr = new XMLHttpRequest();
@@ -852,7 +1058,10 @@
                 // Parse hashtags in the text
                 d.text = d.text.replace(
                     /\s#([^\s]+)/g,
-                    "<code class='$1'> #$1</code>",
+                    function(match, category) {
+                        var emoji = life.config.categoryEmojis && life.config.categoryEmojis[category] ? life.config.categoryEmojis[category] + ' ' : '';
+                        return " <code class='" + category + "'>" + emoji + "#" + category + "</code>";
+                    }
                 );
 
                 // Parse Bold in the text
@@ -1121,6 +1330,11 @@
         // Make print function available globally
         window.preparePrint = function() {
             life.preparePrint();
+        };
+        
+        // Make mobile toggle function available globally
+        window.toggleMobileControls = function() {
+            life.toggleControls();
         };
     })();
 </script>

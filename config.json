@@ -15,7 +15,20 @@
     "rulers": "#ddd6fe",
     "discoveries": "#a5f3fc",
     "disasters": "#fda4af",
-    "construction": "#c4b5fd"
+    "construction": "#c4b5fd",
+    "birth": "#ff9faa",
+    "death": "#9ca3af"
+  },
+  "categoryEmojis": {
+    "worldhistory": "🌍",
+    "wars": "⚔️",
+    "politics": "🏛️",
+    "rulers": "👑",
+    "discoveries": "🔬",
+    "disasters": "🌪️",
+    "construction": "🏗️",
+    "birth": "👶",
+    "death": "⚰️"
   },
   "children": ["najmi", "isa", "nada"]
 }
