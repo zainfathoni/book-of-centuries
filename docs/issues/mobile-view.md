@@ -303,11 +303,11 @@ Then the media query at line 205-207 will correctly show it:
 - [x] Test on desktop (> 768px viewport)
 - [x] **CONFIRMED BUG**: Toggle button IS visible on desktop (should be hidden)
 - [x] Verify controls are always visible on desktop
-- [ ] Remove `.mobile-only { display: flex; }` override (line 137)
-- [ ] Re-test on mobile to ensure toggle still appears
-- [ ] Re-test on desktop to ensure toggle is hidden
-- [ ] Test toggle animation (hamburger → X transformation)
-- [ ] Verify controls hide by default on mobile after fix
+- [x] Remove `.mobile-only { display: flex; }` override (line 137) - **FIXED**
+- [x] Re-test on mobile to ensure toggle still appears - **VERIFIED**
+- [x] Re-test on desktop to ensure toggle is hidden - **VERIFIED**
+- [x] Test toggle animation (hamburger → X transformation) - **WORKS**
+- [x] Verify controls hide by default on mobile after fix - **WORKS**
 
 ## Additional Notes
 
@@ -317,3 +317,123 @@ The CSS animation for the hamburger menu (lines 179-189) is well-designed and sh
 - Smooth transitions
 
 The overall mobile strategy is sound - it just needs the testing code removed and verification that all pieces work together correctly.
+
+---
+
+## Implementation History
+
+### Fix 1: Toggle Button Visibility (COMPLETED)
+**Date**: 2025-10-02
+**Issue**: Toggle button was visible on desktop due to testing code left in production
+**Location**: `index.html:137`
+
+**Change Made**:
+```css
+/* BEFORE */
+.mobile-only {
+    display: flex; /* Temporarily show on all screen sizes for testing */
+}
+
+/* AFTER */
+.mobile-only {
+    display: none; /* Hide by default, show only on mobile */
+}
+```
+
+**Result**:
+- ✅ Toggle button now hidden on desktop (> 768px)
+- ✅ Toggle button visible on mobile (< 768px) via media query
+- ✅ Hamburger animation works correctly
+- ✅ Controls toggle functionality works as expected
+
+**Screenshots**:
+- Desktop after fix: `.playwright-mcp/desktop-view-after-fix.png`
+- Mobile after fix: `.playwright-mcp/mobile-view-after-fix.png`
+
+### Fix 2: Mobile Timeline Layout (COMPLETED)
+**Date**: 2025-10-02
+**Issue**: Timeline events were positioned horizontally with desktop calculations, making mobile view unclear
+**Location**: `index.html:293-307`
+
+**Changes Made**:
+1. Override horizontal positioning:
+```css
+.event {
+    margin-left: 0 !important; /* Override timeline positioning */
+    float: none !important;    /* Force vertical stacking */
+    width: 100%;
+    clear: both;
+}
+```
+
+2. Added mobile-friendly event styling:
+```css
+.event {
+    font-size: 10px;
+    line-height: 1.3;
+    margin-bottom: 4px;
+    padding: 8px;
+    border-radius: 4px;
+    background: rgba(255, 255, 255, 0.05);
+    box-sizing: border-box;
+    white-space: normal;
+    word-wrap: break-word;
+}
+```
+
+**Result**:
+- ✅ Events now display in vertical list format on mobile
+- ✅ Full-width cards with proper spacing
+- ✅ Text wraps correctly within event cards
+- ✅ Horizontal scroll eliminated
+
+**Screenshots**:
+- Mobile timeline after fix: `.playwright-mcp/mobile-timeline-fixed.png`
+- Mobile timeline scrolled: `.playwright-mcp/mobile-timeline-fixed-scrolled.png`
+
+### Fix 3: Hide Decade Timeline on Mobile (ONGOING ISSUE)
+**Date**: 2025-10-02
+**Issue**: Horizontal decade timeline (`#life-years`) still visible on mobile, taking up space
+**Location**: `index.html:319-321`
+
+**Attempted Fix**:
+```css
+body #life-years {
+    display: none !important; /* Hide decade timeline on mobile - not needed for vertical list */
+}
+```
+
+**Problem**: CSS cascade/specificity issue
+- Desktop rule at line 447-453 comes AFTER mobile media query (197-339) in source order
+- Desktop `#life-years { ... }` wins the cascade despite `!important` on mobile rule
+- JavaScript inspection shows: `{ display: "block", visibility: "visible", height: "2179.84px" }`
+
+**Status**: ⚠️ PARTIAL FIX
+- Events ARE correctly positioned in vertical list
+- Decade timeline container STILL VISIBLE (undesired)
+
+**Next Steps**:
+1. Move mobile `#life-years` override to appear AFTER all desktop CSS rules
+2. Or restructure CSS so all mobile media queries come last in file
+3. Or use JavaScript to forcefully hide on mobile viewports
+
+**Screenshots**:
+- Issue visible: `.playwright-mcp/mobile-timeline-after-hide-decades.png`
+
+---
+
+## Final Status
+
+### ✅ Resolved Issues:
+1. Toggle button visibility - Desktop: hidden, Mobile: visible
+2. Mobile event layout - Vertical list with proper spacing
+3. Controls toggle functionality - Works correctly on mobile
+
+### ⚠️ Ongoing Issues:
+1. Decade timeline (`#life-years`) still visible on mobile
+   - Events display correctly, but decade labels take up unnecessary space
+   - CSS cascade order needs restructuring
+
+### 📊 Browser Testing:
+- Desktop (1280x800): ✅ All features working correctly
+- Mobile (375x667): ✅ Toggle works, events display correctly, ⚠️ decade timeline visible
