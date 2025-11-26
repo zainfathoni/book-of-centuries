@@ -10,6 +10,7 @@
 ### Medieval Period
 - 800 AD **Charlemagne** Crowned Holy Roman Emperor [child:najmi]
 - 1066 AD **Battle of Hastings** Norman conquest of England [child:najmi]
+- 1759 AD **Agrippa Hull** was born [child:najmi]
 
 ### Notes
 This is Najmi's personal Book of Centuries focusing on major historical figures and events that capture his interest in ancient and medieval history.
